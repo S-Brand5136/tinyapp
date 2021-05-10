@@ -24,9 +24,12 @@ app.get('/urls', (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// Save shortened and long URL to database, respond with 200 + shortURL 
 app.post('/urls', (req, res) => {
-  console.log(req.body);
-  res.send(generateRandomString());
+  const longUrl = req.body.longURL
+  const shortUrl = generateRandomString()
+  urlDatabase[shortUrl] = longUrl;
+  res.status(200).send(shortUrl);
 });
 
 app.get("/urls/new", (req, res) => {
