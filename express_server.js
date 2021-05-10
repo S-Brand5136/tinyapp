@@ -26,7 +26,7 @@ app.get('/urls', (req, res) => {
 
 app.post('/urls', (req, res) => {
   console.log(req.body);
-  res.send('Ok');
+  res.send(generateRandomString());
 });
 
 app.get("/urls/new", (req, res) => {
@@ -46,3 +46,7 @@ app.get('/hello', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
+
+const generateRandomString = () => {
+  return Math.random().toString(16).substring(9);
+}
