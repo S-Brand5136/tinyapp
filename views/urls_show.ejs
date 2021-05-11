@@ -21,10 +21,10 @@
       </div>
       <div class="card-footer text-muted">
         <h4 class="text-center">Edit</h4>
-        <form action="/urls/:id/" method="post">
+        <form method="POST" action="/urls/<%= shortURL %>">
           <label for="editInput">New Url:</label>
           <input type="text" id="editInput" name="longURL" />
-          <input type="button" value="Submit" type="submit" class="btn btn-primary">
+          <input value="Submit" type="submit" class="btn btn-primary">
         </form>
       </div>
     </div>
