@@ -11,16 +11,16 @@
         <a href="/urls/new" class="nav-item nav-link">Create New URL</a>
       </div>
     </div>
-    <form method="POST" action="/login" class="form-inline">
-      <% if(!username) { %>
+    <% if(!username) { %>
+      <form method="POST" action="/login" class="form-inline">
         <input class="ml-2 form-control" placeholder="Enter username" type="text" id="username" name="username">
         <input type="submit" class="ml-2 btn btn-outline-dark btn-md" value="Login">
-        <% } else { %>
-          <span class="text-center">Logged In As: <%= username %>!</span>
-          <form action="/logout" method="POST">
-            <input type="submit" class="ml-2 btn btn-outline-dark btn-md" value="Logout">
-          </form>
-          <% } %>
-    </form>
+      </form>
+      <% } else { %>
+        <span class="text-center">Logged In As: <%= username %>!</span>
+        <form action="/logout" method="POST">
+          <input type="submit" class="ml-2 btn btn-outline-dark btn-md" value="Logout">
+        </form>
+        <% } %>
   </nav>
 </header>
