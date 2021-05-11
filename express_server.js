@@ -40,11 +40,18 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 })
 
+// POST: login to tinyApp only takes in username
 app.post('/login', (req, res) => {
   const { username } = (req.body);
   res.cookie('username', username);
   res.redirect('/urls');
 })
+
+// POST: Logout and remove cookie
+app.post('/logout', (req, res) => {
+  res.clearCookie('username', {path: "/"});
+  res.redirect('/urls');
+} )
 
 // Shows the database in json form
 app.get('/urls.json', (req, res) => {
