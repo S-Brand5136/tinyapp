@@ -61,13 +61,8 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 // Error Handler middleware
-app.use((err, req, res, next) => {
-  if (err.status === 404) {
-    res.status(err.status).render("urls_notFound", {error: err.message});
-  } else {
-    res.status(500).render("urls_notFound", {error: "Uh oh! Something went wrong internally"});
-  }
-  next();
+app.use((req, res, next) => {
+  res.status(404).render("urls_notFound", {error: '404 Page Not Found'});
 });
 
 app.listen(PORT, () => {
