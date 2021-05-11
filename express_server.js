@@ -39,7 +39,12 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
-    res.render("urls_show", templateVars);
+  if(!templateVars.longURL) {
+    const err = new Error('404 Not Found')
+    err.status = 404;
+    throw err
+  }
+  res.render("urls_show", templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
@@ -50,6 +55,13 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/hello', (req, res) => {
   res.send('<html><body>Hello <b>World</b></body></html>\n');
+});
+
+app.use((err, req, res, next) => {
+  if(err.status === 404) {
+    res.status(err.status).render("urls_notFound", {error: err.message});
+  }
+  next();
 });
 
 app.listen(PORT, () => {
