@@ -24,21 +24,22 @@ app.get('/urls', (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// Save shortened and long URL to database, respond with 200 + shortURL 
+// Save shortened and long URL to database, redirects 
 app.post('/urls', (req, res) => {
-  const longUrl = req.body.longURL
-  const shortUrl = generateRandomString()
+  const longUrl = req.body.longURL;
+  const shortUrl = generateRandomString();
   urlDatabase[shortUrl] = longUrl;
-  res.status(200).send(shortUrl);
+  res.redirect(`/urls/${shortUrl}`);
 });
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new")
 })
 
-app.get('/urls/:id', (req, res) => {
-  const templateVars = {shortURL: req.params.shortURL, longURL: req.params.longURL};
-  res.render("urls_show", templateVars);
+app.get('/urls/:shortURL', (req, res) => {
+  const { shortURL } = req.params
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+    res.render("urls_show", templateVars);
 });
 
 
