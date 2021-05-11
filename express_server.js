@@ -60,6 +60,8 @@ app.get('/hello', (req, res) => {
 app.use((err, req, res, next) => {
   if(err.status === 404) {
     res.status(err.status).render("urls_notFound", {error: err.message});
+  } else {
+    res.status(500).render("urls_notFound", {error: "Uh oh! Something went wrong internally"})
   }
   next();
 });
