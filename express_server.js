@@ -26,10 +26,10 @@ app.get('/urls', (req, res) => {
 
 // Save shortened and long URL to database, redirects 
 app.post('/urls', (req, res) => {
-  const longUrl = req.body.longURL;
-  const shortUrl = generateRandomString();
-  urlDatabase[shortUrl] = longUrl;
-  res.redirect(`/urls/${shortUrl}`);
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls/new", (req, res) => {
@@ -37,11 +37,10 @@ app.get("/urls/new", (req, res) => {
 })
 
 app.get('/urls/:shortURL', (req, res) => {
-  const { shortURL } = req.params
+  const { shortURL } = req.params;
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
     res.render("urls_show", templateVars);
 });
-
 
 app.get('/hello', (req, res) => {
   res.send('<html><body>Hello <b>World</b></body></html>\n');
