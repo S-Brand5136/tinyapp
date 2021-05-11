@@ -32,9 +32,9 @@ app.post('/urls', (req, res) => {
 });
 
 // Delete a url from the database
-app.post('/urls/:id/delete', (req, res) => {
-  const { id } = req.params
-  delete urlDatabase[id];
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const { shortURL } = req.params
+  delete urlDatabase[shortURL];
   res.redirect('/urls');
 })
 
