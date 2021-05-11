@@ -19,7 +19,14 @@
             <%= shortURL %>
           </a></p>
       </div>
-      <div class="card-footer text-muted"></div>
+      <div class="card-footer text-muted">
+        <h4 class="text-center">Edit</h4>
+        <form action="/urls/:id/" method="post">
+          <label for="editInput">New Url:</label>
+          <input type="text" id="editInput" name="longURL" />
+          <input type="button" value="Submit" type="submit" class="btn btn-primary">
+        </form>
+      </div>
     </div>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
