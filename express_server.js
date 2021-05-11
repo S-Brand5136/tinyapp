@@ -31,6 +31,13 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.post('/urls/:id/delete', (req, res) => {
+  const { id } = req.params
+  delete urlDatabase[id];
+  res.redirect('/urls');
+})
+
+
 // Shows the database in json form
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
