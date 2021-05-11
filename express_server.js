@@ -14,7 +14,7 @@ const urlDatabase = {
 };
 
 app.get('/', (req, res) => {
-res.send('Hello!');
+  res.send('Hello!');
 });
 
 // homepage URL shows shortened URLs
@@ -23,7 +23,7 @@ app.get('/urls', (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// Save shortened and long URL to database, redirects 
+// Save shortened and long URL to database, redirects
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
@@ -38,17 +38,17 @@ app.get('/urls.json', (req, res) => {
 
 // Route for creating new tinyURLs
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new")
-})
+  res.render("urls_new");
+});
 
 // Checks the database for a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
-  if(!templateVars.longURL) {
-    const err = new Error('404 Not Found')
+  if (!templateVars.longURL) {
+    const err = new Error('404 Not Found');
     err.status = 404;
-    throw err
+    throw err;
   }
   res.render("urls_show", templateVars);
 });
@@ -58,14 +58,14 @@ app.get('/u/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const longURL = urlDatabase[shortURL];
   res.redirect(`${longURL}`);
-})
+});
 
 // Error Handler middleware
 app.use((err, req, res, next) => {
-  if(err.status === 404) {
+  if (err.status === 404) {
     res.status(err.status).render("urls_notFound", {error: err.message});
   } else {
-    res.status(500).render("urls_notFound", {error: "Uh oh! Something went wrong internally"})
+    res.status(500).render("urls_notFound", {error: "Uh oh! Something went wrong internally"});
   }
   next();
 });
@@ -76,4 +76,4 @@ app.listen(PORT, () => {
 
 const generateRandomString = () => {
   return Math.random().toString(16).substring(9);
-}
+};
