@@ -31,12 +31,12 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Delete a url from the database
 app.post('/urls/:id/delete', (req, res) => {
   const { id } = req.params
   delete urlDatabase[id];
   res.redirect('/urls');
 })
-
 
 // Shows the database in json form
 app.get('/urls.json', (req, res) => {
@@ -47,6 +47,14 @@ app.get('/urls.json', (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+
+// route: POST to update an existing url
+app.post('/urls/:shortURL', (req, res) => {
+  const { longURL } = req.body;
+  const { shortURL } = req.params;
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls`);
+})
 
 // Checks the database for a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res) => {
@@ -59,6 +67,7 @@ app.get('/urls/:shortURL', (req, res) => {
   }
   res.render("urls_show", templateVars);
 });
+
 
 // Redirects to associated LongURL in the database
 app.get('/u/:shortURL', (req, res) => {
