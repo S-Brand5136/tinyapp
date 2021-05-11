@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -35,6 +36,12 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   const { shortURL } = req.params
   delete urlDatabase[shortURL];
+  res.redirect('/urls');
+})
+
+app.post('/login', (req, res) => {
+  const { username } = (req.body);
+  res.cookie('username', username);
   res.redirect('/urls');
 })
 
