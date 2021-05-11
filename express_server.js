@@ -12,13 +12,10 @@ const urlDatabase = {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+res.send('Hello!');
 });
 
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
+// homepage URL shows shortened URLs
 app.get('/urls', (req, res) => {
   const templateVars = {urls: urlDatabase};
   res.render("urls_index", templateVars);
@@ -32,10 +29,17 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Shows the database in json form
+app.get('/urls.json', (req, res) => {
+  res.json(urlDatabase);
+});
+
+// Route for creating new tinyURLs
 app.get("/urls/new", (req, res) => {
   res.render("urls_new")
 })
 
+// Checks the database for a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
@@ -47,16 +51,14 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Redirects to associated LongURL in the database
 app.get('/u/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const longURL = urlDatabase[shortURL];
   res.redirect(`${longURL}`);
 })
 
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n');
-});
-
+// Error Handler middleware
 app.use((err, req, res, next) => {
   if(err.status === 404) {
     res.status(err.status).render("urls_notFound", {error: err.message});
