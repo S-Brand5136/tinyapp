@@ -14,7 +14,7 @@
 ## Installation
   - first clone the repository
   ```bash
-    $ git clone <url here>
+    $ git clone https://github.com/S-Brand5136/tinyapp.git
   ```
   - Open the project and run npm install in the root directory to download all the dependencies used
   ```bash

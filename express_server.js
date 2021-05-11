@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 
 // homepage URL shows shortened URLs
 app.get('/urls', (req, res) => {
-  const templateVars = {urls: urlDatabase};
+  const templateVars = {urls: urlDatabase, username: req.cookies['username']};
   res.render("urls_index", templateVars);
 });
 
@@ -52,7 +52,8 @@ app.get('/urls.json', (req, res) => {
 
 // Route for creating new tinyURLs
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { username: req.cookies["username"] };
+  res.render("urls_new", templateVars);
 });
 
 // route: POST to update an existing url
@@ -66,7 +67,7 @@ app.post('/urls/:shortURL', (req, res) => {
 // Checks the database for a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res) => {
   const { shortURL } = req.params;
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL], username: req.cookies["username"] };
   if (!templateVars.longURL) {
     const err = new Error('404 Not Found');
     err.status = 404;
@@ -85,7 +86,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 // Error Handler middleware
 app.use((req, res, next) => {
-  res.status(404).render("urls_notFound", {error: '404 Page Not Found'});
+  res.status(404).render("urls_notFound", {error: '404 Page Not Found', username: req.cookies["username"]});
 });
 
 app.listen(PORT, () => {
