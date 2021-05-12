@@ -66,6 +66,10 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+app.get('/login', (req, res) => {
+  res.render('urls_login');
+});
+
 // POST: login to tinyApp only takes in username
 app.post('/login', (req, res) => {
   const { username } = (req.body);
