@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { generateDate, generateRandomString } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -136,12 +137,3 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
-
-const generateRandomString = () => {
-  return Math.random().toString(16).substring(9);
-};
-
-const generateDate = () => {
-  const date = new Date;
-  return date.toLocaleString('en-CA', { timeZone: 'America/Edmonton' });
-};
