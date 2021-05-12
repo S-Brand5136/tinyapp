@@ -57,6 +57,10 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+app.get('/register', (req, res) => {
+  res.render('urls_register');
+});
+
 // POST: Logout and remove cookie
 app.post('/logout', (req, res) => {
   res.clearCookie('username', {path: "/"});
@@ -69,9 +73,9 @@ app.get('/urls.json', (req, res) => {
 });
 
 // GET: Route for creating new tinyURLs
-app.get("/urls/new", (req, res) => {
+app.get('/urls/new', (req, res) => {
   const templateVars = { username: req.cookies["username"] };
-  res.render("urls_new", templateVars);
+  res.render('urls_new', templateVars);
 });
 
 // POST: to update an existing url
