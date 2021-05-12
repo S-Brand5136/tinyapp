@@ -8,7 +8,7 @@ const generateDate = () => {
 };
 
 const registerNewUser = ({ email, password }) => {
-  if(!email || !password) {
+  if (!email || !password) {
     return null;
   }
   
@@ -16,17 +16,17 @@ const registerNewUser = ({ email, password }) => {
     userId: generateRandomString(),
     email,
     password,
-  }
+  };
   return newUser;
-}
+};
 
 const checkForEmail = (email, database) => {
-  for(let item in database) {
-    if(database[item].email.toLowerCase() === email.toLowerCase()) {
+  for (let item in database) {
+    if (database[item].email.toLowerCase() === email.toLowerCase()) {
       return database[item];
-    };
+    }
   }
   return false;
-}
+};
 
-module.exports = { generateRandomString, generateDate, registerNewUser, checkForEmail }
+module.exports = { generateRandomString, generateDate, registerNewUser, checkForEmail };

@@ -24,18 +24,18 @@ const urlDatabase = {
   }
 };
 
-const users = { 
+const users = {
   "a94m6h": {
-    id: "a94m6h", 
-    email: "user@example.com", 
+    id: "a94m6h",
+    email: "user@example.com",
     password: "12345"
   },
- "js73md": {
-    id: "js73md", 
-    email: "user2@example.com", 
+  "js73md": {
+    id: "js73md",
+    email: "user2@example.com",
     password: "12345"
   }
-}
+};
 
 // GET: homepage, redirects to /urls if logged in or to login page if not
 app.get('/', (req, res) => {
@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
 
 // GET: user's homepage URL shows shortened URLs
 app.get('/urls', (req, res) => {
-  const userId = req.cookies['user_id']
+  const userId = req.cookies['user_id'];
   const user = users[userId];
   const templateVars = {urls: urlDatabase, user};
   res.render("urls_index", templateVars);
@@ -92,10 +92,10 @@ app.get('/register', (req, res) => {
 
 // POST: a request to register a new user
 app.post('/register', (req, res, next) => {
-  if(!req.body.email || !req.body.password || checkForEmail(req.body.email, users)) {
+  if (!req.body.email || !req.body.password || checkForEmail(req.body.email, users)) {
     const err = new Error("Whoops! Something went wrong registering you. Please try again.");
     err.status = 400;
-  return next(err);
+    return next(err);
   }
   const newUser = registerNewUser(req.body);
   users[newUser.userId] = newUser;
@@ -116,7 +116,10 @@ app.get('/urls.json', (req, res) => {
 
 // GET: Route for creating new tinyURLs
 app.get('/urls/new', (req, res) => {
-  const userId = req.cookies['user_id']
+  const userId = req.cookies['user_id'];
+  if(!userId){
+    res.redirect('/login');
+  }
   const user = users[userId];
   const templateVars = { user };
   res.render('urls_new', templateVars);
@@ -133,14 +136,14 @@ app.post('/urls/:shortURL', (req, res) => {
 // GET: a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  const testURL = urlDatabase[shortURL]
+  const testURL = urlDatabase[shortURL];
   if (!testURL) {
     const err = new Error("Whoops! looks like that url can't be found!");
     err.status = 404;
     next(err);
   }
   const { longURL, numVisits, date } = testURL;
-  const userId = req.cookies['user_id']
+  const userId = req.cookies['user_id'];
   const user = users[userId];
   const templateVars = { shortURL, longURL, date,  numVisits, user };
   res.render("urls_show", templateVars);
@@ -161,8 +164,8 @@ app.get('/u/:shortURL', (req, res, next) => {
 });
 
 // Error Handler middleware
-app.use((err, req, res, next) => {
-  const userId = req.cookies['user_id']
+app.use((err, req, res) => {
+  const userId = req.cookies['user_id'];
   const user = users[userId];
   res.status(err.status).render("urls_notFound", {error: err, user});
 });
