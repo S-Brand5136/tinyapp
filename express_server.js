@@ -11,8 +11,12 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xk': 'http://www.google.com',
+  'b2xVn2': {date: '2021-05-11, 6:52:52 p.m.',
+    longURL: 'http://www.lighthouselabs.ca',
+  },
+  '9sm5xk':{date: '2021-05-11, 6:52:49 p.m.',
+    longURL: 'http://www.google.com',
+  }
 };
 
 app.get('/', (req, res) => {
@@ -35,23 +39,23 @@ app.post('/urls', (req, res) => {
 
 // Delete a url from the database
 app.post('/urls/:shortURL/delete', (req, res) => {
-  const { shortURL } = req.params
+  const { shortURL } = req.params;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
-})
+});
 
 // POST: login to tinyApp only takes in username
 app.post('/login', (req, res) => {
   const { username } = (req.body);
   res.cookie('username', username);
   res.redirect('/urls');
-})
+});
 
 // POST: Logout and remove cookie
 app.post('/logout', (req, res) => {
   res.clearCookie('username', {path: "/"});
   res.redirect('/urls');
-} )
+});
 
 // Shows the database in json form
 app.get('/urls.json', (req, res) => {
@@ -70,7 +74,7 @@ app.post('/urls/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   urlDatabase[shortURL] = longURL;
   res.redirect(`/urls`);
-})
+});
 
 // Checks the database for a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res) => {
@@ -93,7 +97,7 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 // Error Handler middleware
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).render("urls_notFound", {error: '404 Page Not Found', username: req.cookies["username"]});
 });
 
