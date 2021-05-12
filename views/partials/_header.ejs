@@ -12,10 +12,8 @@
       </div>
     </div>
     <% if(!locals.user) { %>
-      <form method="POST" action="/login" class="form-inline">
-        <input class="ml-2 form-control" placeholder="Enter username" type="text" id="username" name="username">
-        <input type="submit" class="ml-2 btn btn-outline-dark btn-md" value="Login">
-      </form>
+      <a href="/login" class="btn btn-outline-dark mr-2">Login</a>
+      <a href="/register" class="btn btn-outline-dark">Register</a>
       <% } else { %>
         <span class="text-center">Logged In As: <%= user.email %>!</span>
         <form action="/logout" method="POST">
