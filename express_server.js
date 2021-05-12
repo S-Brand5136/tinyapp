@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateDate, generateRandomString } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -77,8 +77,17 @@ app.get('/register', (req, res) => {
 });
 
 // POST: a request to register a new user
-app.post('/register', (req, res) => {
-  
+app.post('/register', (req, res, next) => {
+  const newUser = registerNewUser(req.body);
+
+  if(!newUser) {
+    next();
+  }
+
+  users[newUser.userId] = newUser;
+  res.cookie('user_id', newUser.userId);
+
+  res.redirect('/urls');
 });
 
 // POST: Logout and remove cookie
@@ -131,6 +140,7 @@ app.get('/u/:shortURL', (req, res, next) => {
 
 // Error Handler middleware
 app.use((req, res) => {
+  console.log(req.body);
   res.status(404).render("urls_notFound", {error: '404 Page Not Found', username: req.cookies["username"]});
 });
 

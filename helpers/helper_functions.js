@@ -7,4 +7,17 @@ const generateDate = () => {
   return date.toLocaleString('en-CA', { timeZone: 'America/Edmonton' });
 };
 
-module.exports = { generateRandomString, generateDate }
+const registerNewUser = ({ email, password }) => {
+  if(!email || !password) {
+    return null;
+  }
+  
+  const newUser = {
+    userId: generateRandomString(),
+    email,
+    password,
+  }
+  return newUser;
+}
+
+module.exports = { generateRandomString, generateDate, registerNewUser }
