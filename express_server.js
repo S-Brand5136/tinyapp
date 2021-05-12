@@ -79,7 +79,7 @@ app.post('/urls/:shortURL', (req, res) => {
 // Checks the database for a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  const tinyURL = urlDatabase[shortURL]
+  const tinyURL = urlDatabase[shortURL];
   if (!tinyURL) {
     next();
   }
@@ -111,4 +111,4 @@ const generateRandomString = () => {
 const generateDate = () => {
   const date = new Date;
   return date.toLocaleString();
-}
+};
