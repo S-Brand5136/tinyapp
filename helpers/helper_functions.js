@@ -29,4 +29,16 @@ const checkForEmail = (email, database) => {
   return false;
 };
 
-module.exports = { generateRandomString, generateDate, registerNewUser, checkForEmail };
+const urlsForUser = (userID, database) => {
+  const urls = {};
+
+  for(let item in database) {
+    if(database[item].userID === userID){
+      urls[item] = database[item];
+    }
+  }
+
+  return urls;
+}
+
+module.exports = { generateRandomString, generateDate, registerNewUser, checkForEmail, urlsForUser };

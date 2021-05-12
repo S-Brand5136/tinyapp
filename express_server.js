@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateDate, generateRandomString, registerNewUser, checkForEmail } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser, checkForEmail, urlsForUser } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -52,7 +52,8 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => {
   const userId = req.cookies['user_id'];
   const user = users[userId];
-  const templateVars = {urls: urlDatabase, user};
+  const urls = urlsForUser(userId, urlDatabase)
+  const templateVars = {urls, user};
   res.render("urls_index", templateVars);
 });
 
@@ -61,7 +62,7 @@ app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
   const date = generateDate();
-  urlDatabase[shortURL] = {date, longURL};
+  urlDatabase[shortURL] = {date, longURL };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -91,7 +92,7 @@ app.post('/login', (req, res, next) => {
   res.redirect('/urls');
 });
 
-// GET: serves the html for the register page
+// GET: the html for the register page
 app.get('/register', (req, res) => {
   res.render('urls_register');
 });
@@ -109,13 +110,13 @@ app.post('/register', (req, res, next) => {
   res.redirect('/urls');
 });
 
-// POST: Logout and remove cookie
+// POST: to Logout and remove cookie
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id', {path: "/"});
   res.redirect('/urls');
 });
 
-// GET: Shows the database in json form
+// GET: database in json form
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
