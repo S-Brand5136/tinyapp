@@ -20,4 +20,13 @@ const registerNewUser = ({ email, password }) => {
   return newUser;
 }
 
-module.exports = { generateRandomString, generateDate, registerNewUser }
+const checkForEmail = (email, database) => {
+  for(let item in database) {
+    if(database[item].email.toLowerCase() === email.toLowerCase()) {
+      return true;
+    };
+  }
+  return false;
+}
+
+module.exports = { generateRandomString, generateDate, registerNewUser, checkForEmail }

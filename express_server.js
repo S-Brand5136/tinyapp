@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateDate, generateRandomString, registerNewUser } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser, checkForEmail } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -35,15 +35,6 @@ const users = {
     email: "user2@example.com", 
     password: "12345"
   }
-}
-
-const checkForEmail = (email) => {
-  for(let user in users) {
-    if(user.email === email) {
-      return true;
-    };
-  }
-  return false;
 }
 
 // GET: homepage, redirects to /urls if logged in or to login page if not
@@ -89,12 +80,12 @@ app.get('/register', (req, res) => {
 
 // POST: a request to register a new user
 app.post('/register', (req, res, next) => {
-  const newUser = registerNewUser(req.body);
-  if(!newUser || checkForEmail(newUser.email)) {
+  if(!req.body.email || !req.body.password || checkForEmail(req.body.email, users)) {
     const err = new Error("Whoops! Something went wrong registering you. Please try again.");
-    err.status = 400
+    err.status = 400;
     next(err);
   }
+  const newUser = registerNewUser(req.body);
   users[newUser.userId] = newUser;
   res.cookie('user_id', newUser.userId);
   res.redirect('/urls');
