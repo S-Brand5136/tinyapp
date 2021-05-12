@@ -85,11 +85,11 @@ app.post('/urls/:shortURL', (req, res) => {
 // GET: a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  const tinyURL = urlDatabase[shortURL];
-  if (!tinyURL) {
+  if (!urlDatabase[shortURL]) {
     next();
   }
-  const templateVars = { shortURL, longURL: tinyURL.longURL, date: tinyURL.date, numVisits: tinyURL.numVisits, username: req.cookies["username"] };
+  const { longURL, numVisits, date } = urlDatabase[shortURL];
+  const templateVars = { shortURL, longURL, date,  numVisits, username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
