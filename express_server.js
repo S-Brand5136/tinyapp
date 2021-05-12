@@ -11,16 +11,20 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 const urlDatabase = {
-  'b2xVn2': {date: '5/11/2021, 6:52:52 p.m.',
+  'b2xVn2': {
+    date: '5/11/2021, 6:52:52 p.m.',
     longURL: 'http://www.lighthouselabs.ca',
+    numVisits: 0
   },
-  '9sm5xk':{date: '5/11/2021, 6:52:49 p.m.',
+  '9sm5xk':{
+    date: '5/11/2021, 6:52:49 p.m.',
     longURL: 'http://www.google.com',
+    numVisits: 0
   }
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  res.redirect("/urls");
 });
 
 // homepage URL shows shortened URLs
@@ -93,7 +97,7 @@ app.get('/urls/:shortURL', (req, res, next) => {
 app.get('/u/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const tinyURL = urlDatabase[shortURL];
-  if(!tinyURL){
+  if (!tinyURL) {
     next();
   }
   res.redirect(`${tinyURL.longURL}`);
