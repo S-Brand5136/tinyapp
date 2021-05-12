@@ -21,7 +21,7 @@ const registerNewUser = ({ email, password }) => {
 };
 
 const checkForEmail = (email, database) => {
-  for (let item in database) {
+  for (const item in database) {
     if (database[item].email.toLowerCase() === email.toLowerCase()) {
       return database[item];
     }
@@ -32,7 +32,7 @@ const checkForEmail = (email, database) => {
 const urlsForUser = (userID, database) => {
   const urls = {};
 
-  for(let item in database) {
+  for(const item in database) {
     if(database[item].userID === userID){
       urls[item] = database[item];
     }

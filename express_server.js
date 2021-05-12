@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateDate, generateRandomString, registerNewUser, checkForEmail, urlsForUser } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser, checkForEmail, urlsForUser, checkUsersUrls } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -140,20 +140,35 @@ app.post('/urls/:shortURL', (req, res) => {
   res.redirect(`/urls`);
 });
 
-// GET: a URL and renders HTML page or throws error if not found
+// GET: a URL and renders HTML page or throws error if not found / not logged in / user doesn't own the url
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
+  const userID = req.cookies['user_id'];
   const testURL = urlDatabase[shortURL];
+
+  if(!userID) {
+    const err = new Error("Whoa! Try logging in first!");
+    err.status = 403;
+    return next(err);
+  }
+
   if (!testURL) {
     const err = new Error("Whoops! looks like that url can't be found!");
     err.status = 404;
-    next(err);
+   return next(err);
   }
-  const { longURL, numVisits, date } = testURL;
-  const userId = req.cookies['user_id'];
-  const user = users[userId];
-  const templateVars = { shortURL, longURL, date,  numVisits, user };
-  res.render("urls_show", templateVars);
+
+  if(urlDatabase[shortURL].userID === userID) {
+    const { longURL, numVisits, date } = testURL;
+    const userId = req.cookies['user_id'];
+    const user = users[userId];
+    const templateVars = { shortURL, longURL, date,  numVisits, user };
+    res.render("urls_show", templateVars); 
+  }
+
+  const err = new Error("Whoa! This URL doesn't belong to you!");
+  err.status = 403;
+  return next(err);
 });
 
 
@@ -171,7 +186,7 @@ app.get('/u/:shortURL', (req, res, next) => {
 });
 
 // Error Handler middleware
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const userId = req.cookies['user_id'];
   const user = users[userId];
   res.status(err.status).render("urls_notFound", {error: err, user});
