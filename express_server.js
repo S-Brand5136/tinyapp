@@ -90,12 +90,14 @@ app.get('/urls/:shortURL', (req, res, next) => {
 
 
 // Redirects to associated LongURL in the database
-app.get('/u/:shortURL', (req, res) => {
+app.get('/u/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  const { longURL } = urlDatabase[shortURL];
-  res.redirect(`${longURL}`);
+  const tinyURL = urlDatabase[shortURL];
+  if(!tinyURL){
+    next();
+  }
+  res.redirect(`${tinyURL.longURL}`);
 });
-
 // Error Handler middleware
 app.use((req, res) => {
   res.status(404).render("urls_notFound", {error: '404 Page Not Found', username: req.cookies["username"]});
