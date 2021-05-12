@@ -25,16 +25,25 @@ const urlDatabase = {
 };
 
 const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
+  "a94m6h": {
+    id: "a94m6h", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: "12345"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
+ "js73md": {
+    id: "js73md", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: "12345"
   }
+}
+
+const checkForEmail = (email) => {
+  for(let user in users) {
+    if(user.email === email) {
+      return true;
+    };
+  }
+  return false;
 }
 
 // GET: homepage, redirects to /urls if logged in or to login page if not
@@ -81,8 +90,10 @@ app.get('/register', (req, res) => {
 // POST: a request to register a new user
 app.post('/register', (req, res, next) => {
   const newUser = registerNewUser(req.body);
-  if(!newUser) {
-    next();
+  if(!newUser || checkForEmail(newUser.email)) {
+    const err = new Error("Whoops! Something went wrong registering you. Please try again.");
+    err.status = 400
+    next(err);
   }
   users[newUser.userId] = newUser;
   res.cookie('user_id', newUser.userId);
@@ -119,10 +130,13 @@ app.post('/urls/:shortURL', (req, res) => {
 // GET: a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  if (!urlDatabase[shortURL]) {
-    next();
+  const testURL = urlDatabase[shortURL]
+  if (!testURL) {
+    const err = new Error("Whoops! looks like that url can't be found!");
+    err.status = 404;
+    next(err);
   }
-  const { longURL, numVisits, date } = urlDatabase[shortURL];
+  const { longURL, numVisits, date } = testURL;
   const userId = req.cookies['user_id']
   const user = users[userId];
   const templateVars = { shortURL, longURL, date,  numVisits, user };
@@ -135,17 +149,19 @@ app.get('/u/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const tinyURL = urlDatabase[shortURL];
   if (!tinyURL) {
-    next();
+    const err = new Error("Whoops! We can't find that link!");
+    err.status = 404;
+    next(err);
   }
   tinyURL['numVisits']++;
   res.redirect(`${tinyURL.longURL}`);
 });
 
 // Error Handler middleware
-app.use((req, res) => {
+app.use((err, req, res, next) => {
   const userId = req.cookies['user_id']
   const user = users[userId];
-  res.status(404).render("urls_notFound", {error: '404 Page Not Found', user});
+  res.status(err.status).render("urls_notFound", {error: err, user});
 });
 
 app.listen(PORT, () => {
