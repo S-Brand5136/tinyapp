@@ -14,12 +14,12 @@ const urlDatabase = {
   'b2xVn2': {
     date: '5/11/2021, 6:52:52 p.m.',
     longURL: 'http://www.lighthouselabs.ca',
-    numVisits: 0
+    numVisits: 20
   },
   '9sm5xk':{
     date: '5/11/2021, 6:52:49 p.m.',
     longURL: 'http://www.google.com',
-    numVisits: 0
+    numVisits: 12
   }
 };
 
@@ -89,7 +89,7 @@ app.get('/urls/:shortURL', (req, res, next) => {
   if (!tinyURL) {
     next();
   }
-  const templateVars = { shortURL, longURL: tinyURL.longURL, date: tinyURL.date, username: req.cookies["username"] };
+  const templateVars = { shortURL, longURL: tinyURL.longURL, date: tinyURL.date, numVisits: tinyURL.numVisits, username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
@@ -101,6 +101,7 @@ app.get('/u/:shortURL', (req, res, next) => {
   if (!tinyURL) {
     next();
   }
+  tinyURL['numVisits']++;
   res.redirect(`${tinyURL.longURL}`);
 });
 
