@@ -105,7 +105,7 @@ app.post('/register', (req, res, next) => {
 
 // POST: Logout and remove cookie
 app.post('/logout', (req, res) => {
-  res.clearCookie('username', {path: "/"});
+  res.clearCookie('user_id', {path: "/"});
   res.redirect('/urls');
 });
 
