@@ -15,12 +15,14 @@ const urlDatabase = {
   'b2xVn2': {
     date: '5/11/2021, 6:52:52 p.m.',
     longURL: 'http://www.lighthouselabs.ca',
-    numVisits: 20
+    numVisits: 20,
+    userID: "a94m6h"
   },
   '9sm5xk':{
     date: '5/11/2021, 6:52:49 p.m.',
     longURL: 'http://www.google.com',
-    numVisits: 12
+    numVisits: 12,
+    userID: "a94m6h"
   }
 };
 
@@ -39,6 +41,10 @@ const users = {
 
 // GET: homepage, redirects to /urls if logged in or to login page if not
 app.get('/', (req, res) => {
+  const userid = req.cookies['user_id'];
+  if(!userid) {
+    res.redirect('/login');
+  } 
   res.redirect("/urls");
 });
 
