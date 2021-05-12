@@ -11,10 +11,10 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 const urlDatabase = {
-  'b2xVn2': {date: '2021-05-11, 6:52:52 p.m.',
+  'b2xVn2': {date: '5/11/2021, 6:52:52 p.m.',
     longURL: 'http://www.lighthouselabs.ca',
   },
-  '9sm5xk':{date: '2021-05-11, 6:52:49 p.m.',
+  '9sm5xk':{date: '5/11/2021, 6:52:49 p.m.',
     longURL: 'http://www.google.com',
   }
 };
@@ -29,11 +29,12 @@ app.get('/urls', (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// Save shortened and long URL to database, redirects
+// POST: Add URL to datebase
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
+  const date = generateDate();
+  urlDatabase[shortURL] = {date, longURL};
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -110,5 +111,5 @@ const generateRandomString = () => {
 
 const generateDate = () => {
   const date = new Date;
-  return date.toLocaleString();
+  return date.toLocaleString('en-CA', { timeZone: 'America/Edmonton' });
 };
