@@ -44,7 +44,9 @@ app.get('/', (req, res) => {
 
 // GET: user's homepage URL shows shortened URLs
 app.get('/urls', (req, res) => {
-  const templateVars = {urls: urlDatabase, username: req.cookies['username']};
+  const userId = req.cookies['user_id']
+  const user = users[userId];
+  const templateVars = {urls: urlDatabase, user};
   res.render("urls_index", templateVars);
 });
 
@@ -79,14 +81,11 @@ app.get('/register', (req, res) => {
 // POST: a request to register a new user
 app.post('/register', (req, res, next) => {
   const newUser = registerNewUser(req.body);
-
   if(!newUser) {
     next();
   }
-
   users[newUser.userId] = newUser;
   res.cookie('user_id', newUser.userId);
-
   res.redirect('/urls');
 });
 
@@ -103,7 +102,9 @@ app.get('/urls.json', (req, res) => {
 
 // GET: Route for creating new tinyURLs
 app.get('/urls/new', (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const userId = req.cookies['user_id']
+  const user = users[userId];
+  const templateVars = { user };
   res.render('urls_new', templateVars);
 });
 
@@ -122,7 +123,9 @@ app.get('/urls/:shortURL', (req, res, next) => {
     next();
   }
   const { longURL, numVisits, date } = urlDatabase[shortURL];
-  const templateVars = { shortURL, longURL, date,  numVisits, username: req.cookies["username"] };
+  const userId = req.cookies['user_id']
+  const user = users[userId];
+  const templateVars = { shortURL, longURL, date,  numVisits, user };
   res.render("urls_show", templateVars);
 });
 
@@ -140,8 +143,9 @@ app.get('/u/:shortURL', (req, res, next) => {
 
 // Error Handler middleware
 app.use((req, res) => {
-  console.log(req.body);
-  res.status(404).render("urls_notFound", {error: '404 Page Not Found', username: req.cookies["username"]});
+  const userId = req.cookies['user_id']
+  const user = users[userId];
+  res.status(404).render("urls_notFound", {error: '404 Page Not Found', user});
 });
 
 app.listen(PORT, () => {
