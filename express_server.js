@@ -77,14 +77,13 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 // Checks the database for a URL and renders HTML page or throws error if not found
-app.get('/urls/:shortURL', (req, res) => {
+app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL], username: req.cookies["username"] };
-  if (!templateVars.longURL) {
-    const err = new Error('404 Not Found');
-    err.status = 404;
-    throw err;
+  const tinyURL = urlDatabase[shortURL]
+  if (!tinyURL) {
+    next();
   }
+  const templateVars = { shortURL, longURL: tinyURL.longURL, date: tinyURL.date, username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
