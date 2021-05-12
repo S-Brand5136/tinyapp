@@ -23,11 +23,12 @@ const urlDatabase = {
   }
 };
 
+// GET: homepage, redirects to /urls if logged in or to login page if not
 app.get('/', (req, res) => {
   res.redirect("/urls");
 });
 
-// homepage URL shows shortened URLs
+// GET: user's homepage URL shows shortened URLs
 app.get('/urls', (req, res) => {
   const templateVars = {urls: urlDatabase, username: req.cookies['username']};
   res.render("urls_index", templateVars);
@@ -42,7 +43,7 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// Delete a url from the database
+// POST: Delete a url from the database
 app.post('/urls/:shortURL/delete', (req, res) => {
   const { shortURL } = req.params;
   delete urlDatabase[shortURL];
@@ -62,18 +63,18 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
-// Shows the database in json form
+// GET: Shows the database in json form
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-// Route for creating new tinyURLs
+// GET: Route for creating new tinyURLs
 app.get("/urls/new", (req, res) => {
   const templateVars = { username: req.cookies["username"] };
   res.render("urls_new", templateVars);
 });
 
-// route: POST to update an existing url
+// POST: to update an existing url
 app.post('/urls/:shortURL', (req, res) => {
   const { longURL } = req.body;
   const { shortURL } = req.params;
@@ -81,7 +82,7 @@ app.post('/urls/:shortURL', (req, res) => {
   res.redirect(`/urls`);
 });
 
-// Checks the database for a URL and renders HTML page or throws error if not found
+// GET: a URL and renders HTML page or throws error if not found
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const tinyURL = urlDatabase[shortURL];
@@ -93,7 +94,7 @@ app.get('/urls/:shortURL', (req, res, next) => {
 });
 
 
-// Redirects to associated LongURL in the database
+// GET: associated LongURL in the database and redirect to its webpage
 app.get('/u/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const tinyURL = urlDatabase[shortURL];
@@ -102,6 +103,7 @@ app.get('/u/:shortURL', (req, res, next) => {
   }
   res.redirect(`${tinyURL.longURL}`);
 });
+
 // Error Handler middleware
 app.use((req, res) => {
   res.status(404).render("urls_notFound", {error: '404 Page Not Found', username: req.cookies["username"]});
