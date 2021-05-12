@@ -71,9 +71,17 @@ app.get('/login', (req, res) => {
 });
 
 // POST: login to tinyApp only takes in username
-app.post('/login', (req, res) => {
-  const { username } = (req.body);
-  res.cookie('username', username);
+app.post('/login', (req, res, next) => {
+  const { email, password } = (req.body);
+  const existingUser = checkForEmail(email, users);
+
+  if (!existingUser || existingUser.password !== password) {
+    const err = new Error("Whoops! looks like you entered the wrong username or password!");
+    err.status = 403;
+    return next(err);
+  }
+
+  res.cookie('user_id', existingUser.id);
   res.redirect('/urls');
 });
 
@@ -87,7 +95,7 @@ app.post('/register', (req, res, next) => {
   if(!req.body.email || !req.body.password || checkForEmail(req.body.email, users)) {
     const err = new Error("Whoops! Something went wrong registering you. Please try again.");
     err.status = 400;
-    next(err);
+  return next(err);
   }
   const newUser = registerNewUser(req.body);
   users[newUser.userId] = newUser;

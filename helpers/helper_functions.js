@@ -23,7 +23,7 @@ const registerNewUser = ({ email, password }) => {
 const checkForEmail = (email, database) => {
   for(let item in database) {
     if(database[item].email.toLowerCase() === email.toLowerCase()) {
-      return true;
+      return database[item];
     };
   }
   return false;
