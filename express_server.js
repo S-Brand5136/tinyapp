@@ -23,6 +23,19 @@ const urlDatabase = {
   }
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 // GET: homepage, redirects to /urls if logged in or to login page if not
 app.get('/', (req, res) => {
   res.redirect("/urls");
@@ -57,8 +70,14 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+// GET: serves the html for the register page
 app.get('/register', (req, res) => {
   res.render('urls_register');
+});
+
+// POST: a request to register a new user
+app.post('/register', (req, res) => {
+  
 });
 
 // POST: Logout and remove cookie
