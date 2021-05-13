@@ -68,8 +68,16 @@ app.post('/urls', (req, res) => {
 });
 
 // POST: Delete a url from the database
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.post('/urls/:shortURL/delete', (req, res, next) => {
   const { shortURL } = req.params;
+
+  const userID = req.cookies['user_id'];
+  if(userID !== urlDatabase[shortURL].userID || !userID){
+    const err = new Error("Whoa! You can't delete this url, it doesn't belong to you!");
+    err.status = 403;
+    return next(err);
+  }
+  
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
@@ -139,7 +147,7 @@ app.post('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.cookies['user_id'];
   if(userID !== urlDatabase[shortURL].userID || !userID){
-    const err = new Error("Whoa! You can't delete this url, it doesn't belong to you!");
+    const err = new Error("Whoa! You can't update this url, it doesn't belong to you!");
     err.status = 403;
     return next(err);
   }
