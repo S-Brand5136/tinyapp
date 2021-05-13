@@ -13,33 +13,9 @@ app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
-const urlDatabase = {
-  'b2xVn2': {
-    date: '5/11/2021, 6:52:52 p.m.',
-    longURL: 'http://www.lighthouselabs.ca',
-    numVisits: 20,
-    userID: "a94m6h"
-  },
-  '9sm5xk':{
-    date: '5/11/2021, 6:52:49 p.m.',
-    longURL: 'http://www.google.com',
-    numVisits: 12,
-    userID: "a94m6h"
-  }
-};
+const urlDatabase = {};
 
-const users = {
-  "a94m6h": {
-    id: "a94m6h",
-    email: "user@example.com",
-    password: "12345"
-  },
-  "js73md": {
-    id: "js73md",
-    email: "user2@example.com",
-    password: "12345"
-  }
-};
+const users = {};
 
 // Requests
 // GET: homepage, redirects to /urls if logged in or to login page if not
@@ -95,13 +71,13 @@ app.post('/login', (req, res, next) => {
   const { email, password } = (req.body);
   const user = authEmail(email, users);
 
-  if (!user || !comparePasswords(password, users[user].password)) {
+  if (!user || !comparePasswords(password, users[user.userID].password)) {
     const err = new Error("Whoops! looks like you entered the wrong username or password!");
     err.status = 403;
     return next(err);
   }
 
-  res.cookie('user_id', user.id);
+  res.cookie('user_id', user.userID);
   res.redirect('/urls');
 });
 
@@ -112,16 +88,16 @@ app.get('/register', (req, res) => {
 
 // POST: a request to register a new user, authenticates credentials before adding to database and redirecting
 app.post('/register', (req, res, next) => {
-
   if (!req.body.email || !req.body.password || authEmail(req.body.email, users)) {
     const err = new Error("Whoops! Something went wrong registering you. Please try again.");
     err.status = 400;
     return next(err);
   }
 
+
   const newUser = registerNewUser(req.body);
-  users[newUser.userId] = newUser;
-  res.cookie('user_id', newUser.userId);
+  users[newUser.userID] = newUser;
+  res.cookie('user_id', newUser.userID);
   res.redirect('/urls');
 });
 

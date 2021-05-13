@@ -15,20 +15,21 @@ const registerNewUser = ({ email, password }) => {
   }
   
   const newUser = {
-    userId: generateRandomString(),
+    userID: generateRandomString(),
     email,
     password: bcrypt.hashSync(password, 10),
   };
+
   return newUser;
 };
 
 const authEmail = (email, database) => {
   for (const item in database) {
-    if (database[item].email.toLowerCase() === email.toLowerCase()) {
+    if (database[item].email === email) {
       return database[item];
     }
   }
-  return null;
+  return false;
 };
 
 const urlsForUser = (userID, database) => {
@@ -45,6 +46,6 @@ const urlsForUser = (userID, database) => {
 
 const comparePasswords = (password, dbPassword) => {
   return bcrypt.compare(password, dbPassword);
-}
+};
 
 module.exports = { generateRandomString, generateDate, registerNewUser, authEmail, urlsForUser, comparePasswords };
