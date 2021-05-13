@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const generateRandomString = () => {
   return Math.random().toString(16).substring(9);
 };
@@ -15,7 +17,7 @@ const registerNewUser = ({ email, password }) => {
   const newUser = {
     userId: generateRandomString(),
     email,
-    password,
+    password: bcrypt.hashSync(password, 10),
   };
   return newUser;
 };
