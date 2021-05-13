@@ -60,9 +60,10 @@ app.get('/urls', (req, res) => {
 // POST: Add URL to datebase
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
+  const userID = req.cookies['user_id'];
   const shortURL = generateRandomString();
   const date = generateDate();
-  urlDatabase[shortURL] = {date, longURL };
+  urlDatabase[shortURL] = {date, longURL, userID, numVisits: 0 };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -144,7 +145,7 @@ app.post('/urls/:shortURL', (req, res) => {
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.cookies['user_id'];
-  const testURL = urlDatabase[shortURL];
+  const tinyURL = urlDatabase[shortURL];
 
   if(!userID) {
     const err = new Error("Whoa! Try logging in first!");
@@ -152,18 +153,18 @@ app.get('/urls/:shortURL', (req, res, next) => {
     return next(err);
   }
 
-  if (!testURL) {
+  if (!tinyURL) {
     const err = new Error("Whoops! looks like that url can't be found!");
     err.status = 404;
    return next(err);
   }
 
   if(urlDatabase[shortURL].userID === userID) {
-    const { longURL, numVisits, date } = testURL;
+    const { longURL, numVisits, date } = tinyURL;
     const userId = req.cookies['user_id'];
     const user = users[userId];
     const templateVars = { shortURL, longURL, date,  numVisits, user };
-    res.render("urls_show", templateVars); 
+    return res.render("urls_show", templateVars); 
   }
 
   const err = new Error("Whoa! This URL doesn't belong to you!");
