@@ -40,7 +40,7 @@ app.get('/urls', (req, res, next) => {
   const userID = req.session.user_id;
 
   if (!userID) {
-    const err = new Error('Try logging in first!');
+    const err = new Error('Login or Register to start viewing shortened URLs');
     err.status = 403;
     next(err);
   }
