@@ -13,13 +13,13 @@ const registerNewUser = ({ email, password }) => {
   if (!email || !password) {
     return null;
   }
-  
+
   const newUser = {
     userID: generateRandomString(),
     email,
     password: bcrypt.hashSync(password, 10),
   };
-
+  
   return newUser;
 };
 

@@ -1,7 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const { generateDate, generateRandomString, registerNewUser, authEmail, urlsForUser, comparePasswords } = require('./helpers/helper_functions');
 const app = express();
@@ -10,12 +9,7 @@ const PORT = 8080;
 // MiddleWare:
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
-app.use(cookieParser());
-// set cookie session to 24 hours
-app.use(cookieSession({
-  name: 'session', 
-  maxAge: 24 * 60 * 60 * 1000
-}));
+app.use(cookieSession({name: 'session', keys: ['abc123'] }));
 
 app.set("view engine", "ejs");
 
@@ -103,7 +97,7 @@ app.post('/register', (req, res, next) => {
 
   const newUser = registerNewUser(req.body);
   users[newUser.userID] = newUser;
-  req.session.user_id = user.userID;
+  req.session.user_id = newUser.userID;
   res.redirect('/urls');
 });
 
@@ -151,9 +145,10 @@ app.post('/urls/:shortURL', (req, res, next) => {
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
+  const user = users[userID]
   const dbShortURL = urlDatabase[shortURL];
 
-  if (!userID) {
+  if (!user) {
     const err = new Error("Whoa! Try logging in first!");
     err.status = 403;
     return next(err);
@@ -165,9 +160,9 @@ app.get('/urls/:shortURL', (req, res, next) => {
     return next(err);
   }
 
-  if (urlDatabase[shortURL].userID === userID) {
-    const { longURL, numVisits, date } = dbShortURL;
-    const templateVars = { shortURL, longURL, date,  numVisits, userID };
+  if (dbShortURL.userID === user.userID) {
+    const { longURL, numVisits, date,} = dbShortURL;
+    const templateVars = { shortURL, longURL, date,  numVisits, user };
     return res.render("urls_show", templateVars);
   }
 
