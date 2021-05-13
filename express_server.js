@@ -37,9 +37,14 @@ app.get('/urls', (req, res) => {
 });
 
 // POST: Add URL to datebase
-app.post('/urls', (req, res) => {
+app.post('/urls', (req, res, next) => {
   const longURL = req.body.longURL;
   const userID = req.session.user_id;
+  if(!userID) {
+    const err = new Error("Whoa! You have to login first!");
+    err.status = 403;
+    next(err);
+  }
   const shortURL = generateRandomString();
   const date = generateDate();
   urlDatabase[shortURL] = {date, longURL, userID, numVisits: 0 };
