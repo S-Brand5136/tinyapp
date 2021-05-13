@@ -29,7 +29,7 @@ const getUserByEmail = (email, database) => {
       return database[item];
     }
   }
-  return null;
+  return undefined;
 };
 
 const urlsForUser = (userID, database) => {

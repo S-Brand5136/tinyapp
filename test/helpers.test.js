@@ -18,9 +18,21 @@ const testUsers = {
 describe('#getUserByEmail', () => {
   
   it('should return a user with a valid email', () => {
-    const user = getUserByEmail("user@example.com", testUsers);
-    const expectedOutput = testUsers["userRandomID"];
-    assert.deepEqual(user, expectedOutput);
+    const user = getUserByEmail('user@example.com', testUsers);
+    const expectedOutput = 'userRandomID';
+    assert.equal(user.id, expectedOutput);
+  });
+
+  it('should return undefined if an invalid email is used', () => {
+    const user = getUserByEmail('user3@example.ca', testUsers);
+    const expectedOutput = undefined
+    assert.equal(user, expectedOutput)
+  });
+
+  it('should return undefined if an empty string is used', () => {
+    const user = getUserByEmail('', testUsers);
+    const expectedOutput = undefined;
+    assert.equal(user, expectedOutput);
   });
 
 });
