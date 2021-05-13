@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
-const { generateDate, generateRandomString, registerNewUser, getUserByEmail, urlsForUser, comparePasswords } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser, getUserByEmail, urlsForUser, comparePasswords } = require('./helpers/helpers');
 const app = express();
 const PORT = 8080;
 
