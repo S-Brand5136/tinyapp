@@ -43,7 +43,7 @@ app.post('/urls', (req, res, next) => {
   if(!userID) {
     const err = new Error("Whoa! You have to login first!");
     err.status = 403;
-    next(err);
+    return next(err);
   }
   const shortURL = generateRandomString();
   const date = generateDate();
@@ -56,7 +56,13 @@ app.post('/urls/:shortURL/delete', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
 
-  if (userID !== urlDatabase[shortURL].userID || !userID) {
+  if(!userID) {
+    const err = new Error("Whoa! You have to login first!!");
+    err.status = 403;
+    return next(err);
+  }
+
+  if (userID !== urlDatabase[shortURL].userID) {
     const err = new Error("Whoa! You can't delete this url, it doesn't belong to you!");
     err.status = 403;
     return next(err);
@@ -68,7 +74,11 @@ app.post('/urls/:shortURL/delete', (req, res, next) => {
 
 // GET: login page
 app.get('/login', (req, res) => {
-  res.render('urls_login');
+  const userID = req.session.user_id;
+  if(!userID) {
+  return res.render('urls_login');
+  }
+  res.redirect('/urls');
 });
 
 // POST: login to tinyApp, authenticates users email and password
@@ -88,7 +98,11 @@ app.post('/login', (req, res, next) => {
 
 // GET: registration page
 app.get('/register', (req, res) => {
-  res.render('urls_register');
+  const userID = req.session.user_id;
+  if(!userID) {
+   return res.render('urls_register');
+  }
+ res.redirect('/urls');
 });
 
 // POST: a request to register a new user, authenticates credentials before adding to database and redirecting
