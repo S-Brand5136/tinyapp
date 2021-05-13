@@ -134,10 +134,16 @@ app.get('/urls/new', (req, res) => {
 });
 
 // POST: to update an existing url
-app.post('/urls/:shortURL', (req, res) => {
+app.post('/urls/:shortURL', (req, res, next) => {
   const { longURL } = req.body;
   const { shortURL } = req.params;
-  urlDatabase[shortURL] = longURL;
+  const userID = req.cookies['user_id'];
+  if(userID !== urlDatabase[shortURL].userID || !userID){
+    const err = new Error("Whoa! You can't delete this url, it doesn't belong to you!");
+    err.status = 403;
+    return next(err);
+  }
+  urlDatabase[shortURL].longURL = longURL;
   res.redirect(`/urls`);
 });
 
@@ -190,7 +196,7 @@ app.get('/u/:shortURL', (req, res, next) => {
 app.use((err, req, res, next) => {
   const userId = req.cookies['user_id'];
   const user = users[userId];
-  res.status(err.status).render("urls_notFound", {error: err, user});
+  res.status(err.status).render("urls_error", {error: err, user});
 });
 
 app.listen(PORT, () => {
