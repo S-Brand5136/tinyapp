@@ -23,13 +23,13 @@ const registerNewUser = ({ email, password }) => {
   return newUser;
 };
 
-const authEmail = (email, database) => {
+const getUserByEmail = (email, database) => {
   for (const item in database) {
     if (database[item].email === email) {
       return database[item];
     }
   }
-  return false;
+  return null;
 };
 
 const urlsForUser = (userID, database) => {
@@ -48,4 +48,4 @@ const comparePasswords = (password, dbPassword) => {
   return bcrypt.compare(password, dbPassword);
 };
 
-module.exports = { generateRandomString, generateDate, registerNewUser, authEmail, urlsForUser, comparePasswords };
+module.exports = { generateRandomString, generateDate, registerNewUser, getUserByEmail, urlsForUser, comparePasswords };

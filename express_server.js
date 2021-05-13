@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
-const { generateDate, generateRandomString, registerNewUser, authEmail, urlsForUser, comparePasswords } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser, getUserByEmail, urlsForUser, comparePasswords } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -69,7 +69,7 @@ app.get('/login', (req, res) => {
 // POST: login to tinyApp, authenticates users email and password
 app.post('/login', (req, res, next) => {
   const { email, password } = (req.body);
-  const user = authEmail(email, users);
+  const user = getUserByEmail(email, users);
 
   if (!user || !comparePasswords(password, users[user.userID].password)) {
     const err = new Error("Whoops! looks like you entered the wrong username or password!");
@@ -88,7 +88,7 @@ app.get('/register', (req, res) => {
 
 // POST: a request to register a new user, authenticates credentials before adding to database and redirecting
 app.post('/register', (req, res, next) => {
-  if (!req.body.email || !req.body.password || authEmail(req.body.email, users)) {
+  if (!req.body.email || !req.body.password || getUserByEmail(req.body.email, users)) {
     const err = new Error("Whoops! Something went wrong registering you. Please try again.");
     err.status = 400;
     return next(err);
