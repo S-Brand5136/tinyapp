@@ -16,55 +16,48 @@
     <main style="margin: 1em">
 
       <% if(!locals.user) { %>
-
-        <h3 class="text-center">TinyApp</h3>
-        <div class="text-center">
-          <p>Login first! Or try creating a new account to try out TinyApp!</p>
-          <a href="/login" class="btn btn-primary mr-2">Login</a>
-          <a href="/register" class="btn btn-primary">Register</a>
-        </div>
-
-        <% } else { %>
-          <h3>My URLs</h3>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Short URL</th>
-                <th scope="col">Long URL</th>
-                <th scope="col">Date Added</th>
-                <th scope="col">Number of Visits</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% for(const url in urls) { %>
+        <%- include('partials/_loginMessage') %>
+          <% } else { %>
+            <h3>My URLs</h3>
+            <table class="table">
+              <thead>
                 <tr>
-                  <td>
-                    <%= url %>
-                  </td>
-                  <td>
-                    <%= urls[url].longURL %>
-                  </td>
-                  <td>
-                    <%= urls[url].date %>
-                  </td>
-                  <td>
-                    <%= urls[url].numVisits %>
-                  </td>
-                  <td>
-                    <a href='urls/<%= url %>' class="btn btn-outline-primary">Edit</a>
-                  </td>
-                  <td>
-                    <form method="POST" action="/urls/<%= url %>/delete">
-                      <input class="btn btn-outline-danger" type="submit" value="Delete" />
-                    </form>
-                  </td>
+                  <th scope="col">Short URL</th>
+                  <th scope="col">Long URL</th>
+                  <th scope="col">Date Added</th>
+                  <th scope="col">Number of Visits</th>
+                  <th scope="col">Edit</th>
+                  <th scope="col">Delete</th>
                 </tr>
-                <% } %>
-            </tbody>
-          </table>
-          <% } %>
+              </thead>
+              <tbody>
+                <% for(const url in urls) { %>
+                  <tr>
+                    <td>
+                      <%= url %>
+                    </td>
+                    <td>
+                      <%= urls[url].longURL %>
+                    </td>
+                    <td>
+                      <%= urls[url].date %>
+                    </td>
+                    <td>
+                      <%= urls[url].numVisits %>
+                    </td>
+                    <td>
+                      <a href='urls/<%= url %>' class="btn btn-outline-primary">Edit</a>
+                    </td>
+                    <td>
+                      <form method="POST" action="/urls/<%= url %>/delete">
+                        <input class="btn btn-outline-danger" type="submit" value="Delete" />
+                      </form>
+                    </td>
+                  </tr>
+                  <% } %>
+              </tbody>
+            </table>
+            <% } %>
     </main>
     <!-- Bootstrap CSS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
