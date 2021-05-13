@@ -2,15 +2,22 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
-const { generateDate, generateRandomString, registerNewUser, getUserByEmail, urlsForUser, comparePasswords } = require('./helpers/helpers');
+const {
+  generateDate,
+  generateRandomString,
+  registerNewUser,
+  getUserByEmail,
+  urlsForUser,
+  comparePasswords,
+} = require('./helpers/helpers');
 const app = express();
 const PORT = 8080;
 
-// *** MIDDLEWARE *** 
-app.use(bodyParser.urlencoded({extended: true}));
+// *** MIDDLEWARE ***
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.use(cookieSession({name: 'session', keys: ['abc123'] }));
-app.set("view engine", "ejs");
+app.use(cookieSession({ name: 'session', keys: ['abc123'] }));
+app.set('view engine', 'ejs');
 
 // *** DATEBASE **
 const urlDatabase = {};
@@ -24,7 +31,7 @@ app.get('/', (req, res) => {
   if (!userID) {
     return res.redirect('/login');
   }
-  res.redirect("/urls");
+  res.redirect('/urls');
 });
 
 // GET: user's homepage filters to show only their URLs
@@ -32,16 +39,16 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res, next) => {
   const userID = req.session.user_id;
 
-  if(!userID) {
-    const err = new Error("Try logging in first!");
+  if (!userID) {
+    const err = new Error('Try logging in first!');
     err.status = 403;
-    next(err)
+    next(err);
   }
 
   const user = users[userID];
   const urls = urlsForUser(userID, urlDatabase);
-  const templateVars = {urls, user};
-  res.render("urls_index", templateVars);
+  const templateVars = { urls, user };
+  res.render('urls_index', templateVars);
 });
 
 // POST: Add URL to datebase
@@ -50,15 +57,15 @@ app.post('/urls', (req, res, next) => {
   const longURL = req.body.longURL;
   const userID = req.session.user_id;
 
-  if(!userID) {
-    const err = new Error("Whoa! You have to login first!");
+  if (!userID) {
+    const err = new Error('Whoa! You have to login first!');
     err.status = 403;
     return next(err);
   }
 
   const shortURL = generateRandomString();
   const date = generateDate();
-  urlDatabase[shortURL] = {date, longURL, userID, numVisits: 0 };
+  urlDatabase[shortURL] = { date, longURL, userID, numVisits: 0 };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -69,11 +76,13 @@ app.post('/urls/:shortURL/delete', (req, res, next) => {
   const userID = req.session.user_id;
 
   if (!userID || userID !== urlDatabase[shortURL].userID) {
-    const err = new Error("Whoa! This URL doesn't belong to you! Login first or double check your URLs!");
+    const err = new Error(
+      "Whoa! This URL doesn't belong to you! Login first or double check your URLs!"
+    );
     err.status = 403;
     return next(err);
   }
-  
+
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
@@ -83,8 +92,8 @@ app.post('/urls/:shortURL/delete', (req, res, next) => {
 app.get('/login', (req, res) => {
   const userID = req.session.user_id;
 
-  if(!userID) {
-  return res.render('urls_login');
+  if (!userID) {
+    return res.render('urls_login');
   }
 
   res.redirect('/urls');
@@ -93,11 +102,13 @@ app.get('/login', (req, res) => {
 // POST: login to tinyApp, authenticates users email and password
 // PUBLIC
 app.post('/login', (req, res, next) => {
-  const { email, password } = (req.body);
+  const { email, password } = req.body;
   const user = getUserByEmail(email, users);
 
   if (!user || !comparePasswords(password, users[user.userID].password)) {
-    const err = new Error("Whoops! looks like you entered the wrong username or password!");
+    const err = new Error(
+      'Whoops! looks like you entered the wrong username or password!'
+    );
     err.status = 403;
     return next(err);
   }
@@ -111,18 +122,24 @@ app.post('/login', (req, res, next) => {
 app.get('/register', (req, res) => {
   const userID = req.session.user_id;
 
-  if(!userID) {
-   return res.render('urls_register');
+  if (!userID) {
+    return res.render('urls_register');
   }
 
- res.redirect('/urls');
+  res.redirect('/urls');
 });
 
 // POST: a request to register a new user, authenticates credentials before adding to database and redirecting
 // PUBLIC
 app.post('/register', (req, res, next) => {
-  if (!req.body.email || !req.body.password || getUserByEmail(req.body.email, users)) {
-    const err = new Error("Whoa! Something went wrong registering you. Please try again.");
+  if (
+    !req.body.email ||
+    !req.body.password ||
+    getUserByEmail(req.body.email, users)
+  ) {
+    const err = new Error(
+      'Whoa! Something went wrong registering you. Please try again.'
+    );
     err.status = 400;
     return next(err);
   }
@@ -162,7 +179,9 @@ app.post('/urls/:shortURL', (req, res, next) => {
   const userID = req.session.user_id;
 
   if (userID !== urlDatabase[shortURL].userID || !userID) {
-    const err = new Error("Whoa! This URL doesn't belong to you! Login first or double check your URLs!");
+    const err = new Error(
+      "Whoa! This URL doesn't belong to you! Login first or double check your URLs!"
+    );
     err.status = 403;
     return next(err);
   }
@@ -176,7 +195,7 @@ app.post('/urls/:shortURL', (req, res, next) => {
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
-  const user = users[userID]
+  const user = users[userID];
   const dbShortURL = urlDatabase[shortURL];
 
   if (!dbShortURL) {
@@ -186,16 +205,17 @@ app.get('/urls/:shortURL', (req, res, next) => {
   }
 
   if (dbShortURL.userID === user.userID) {
-    const { longURL, numVisits, date,} = dbShortURL;
-    const templateVars = { shortURL, longURL, date,  numVisits, user };
-    return res.render("urls_show", templateVars);
+    const { longURL, numVisits, date } = dbShortURL;
+    const templateVars = { shortURL, longURL, date, numVisits, user };
+    return res.render('urls_show', templateVars);
   }
 
-  const err = new Error("Whoa! This URL doesn't belong to you! Login first or double check your URLs!");
+  const err = new Error(
+    "Whoa! This URL doesn't belong to you! Login first or double check your URLs!"
+  );
   err.status = 403;
   return next(err);
 });
-
 
 // GET: associated LongURL in the database and redirect to its webpage
 // PUBLIC
@@ -208,7 +228,7 @@ app.get('/u/:shortURL', (req, res, next) => {
     err.status = 404;
     next(err);
   }
-  
+
   dbShortURL['numVisits']++;
   res.redirect(`${dbShortURL.longURL}`);
 });
@@ -217,7 +237,7 @@ app.get('/u/:shortURL', (req, res, next) => {
 app.use((err, req, res, next) => {
   const userID = req.session.user_id;
   const user = users[userID];
-  res.status(err.status).render("urls_error", {error: err, user});
+  res.status(err.status).render('urls_error', { error: err, user });
 });
 
 app.listen(PORT, () => {
