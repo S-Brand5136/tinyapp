@@ -43,4 +43,8 @@ const urlsForUser = (userID, database) => {
   return urls;
 };
 
-module.exports = { generateRandomString, generateDate, registerNewUser, authEmail, urlsForUser };
+const comparePasswords = (password, dbPassword) => {
+  return bcrypt.compare(password, dbPassword);
+}
+
+module.exports = { generateRandomString, generateDate, registerNewUser, authEmail, urlsForUser, comparePasswords };

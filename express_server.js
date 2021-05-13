@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateDate, generateRandomString, registerNewUser, authEmail, urlsForUser } = require('./helpers/helper_functions');
+const { generateDate, generateRandomString, registerNewUser, authEmail, urlsForUser, comparePasswords } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
 
@@ -95,7 +95,7 @@ app.post('/login', (req, res, next) => {
   const { email, password } = (req.body);
   const user = authEmail(email, users);
 
-  if (!user || user.password !== password) {
+  if (!user || !comparePasswords(password, users[user].password)) {
     const err = new Error("Whoops! looks like you entered the wrong username or password!");
     err.status = 403;
     return next(err);
