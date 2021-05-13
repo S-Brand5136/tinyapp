@@ -20,25 +20,25 @@ const registerNewUser = ({ email, password }) => {
   return newUser;
 };
 
-const checkForEmail = (email, database) => {
+const authEmail = (email, database) => {
   for (const item in database) {
     if (database[item].email.toLowerCase() === email.toLowerCase()) {
       return database[item];
     }
   }
-  return false;
+  return null;
 };
 
 const urlsForUser = (userID, database) => {
   const urls = {};
 
-  for(const item in database) {
-    if(database[item].userID === userID){
+  for (const item in database) {
+    if (database[item].userID === userID) {
       urls[item] = database[item];
     }
   }
 
   return urls;
-}
+};
 
-module.exports = { generateRandomString, generateDate, registerNewUser, checkForEmail, urlsForUser };
+module.exports = { generateRandomString, generateDate, registerNewUser, authEmail, urlsForUser };
