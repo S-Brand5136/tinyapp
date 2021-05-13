@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const { generateDate, generateRandomString, registerNewUser, authEmail, urlsForUser, comparePasswords } = require('./helpers/helper_functions');
 const app = express();
 const PORT = 8080;
@@ -22,7 +23,7 @@ const users = {};
 app.get('/', (req, res) => {
   const userID = req.cookies['user_id'];
   if (!userID) {
-    res.redirect('/login');
+    return res.redirect('/login');
   }
   res.redirect("/urls");
 });
