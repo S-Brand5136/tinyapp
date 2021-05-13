@@ -11,6 +11,11 @@ const PORT = 8080;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(cookieParser());
+// set cookie session to 24 hours
+app.use(cookieSession({
+  name: 'session', 
+  maxAge: 24 * 60 * 60 * 1000
+}));
 
 app.set("view engine", "ejs");
 
@@ -21,7 +26,7 @@ const users = {};
 // Requests
 // GET: homepage, redirects to /urls if logged in or to login page if not
 app.get('/', (req, res) => {
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
   if (!userID) {
     return res.redirect('/login');
   }
@@ -30,7 +35,7 @@ app.get('/', (req, res) => {
 
 // GET: user's homepage filters to show only their URLs
 app.get('/urls', (req, res) => {
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
   const user = users[userID];
   const urls = urlsForUser(userID, urlDatabase);
   const templateVars = {urls, user};
@@ -40,7 +45,7 @@ app.get('/urls', (req, res) => {
 // POST: Add URL to datebase
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
   const shortURL = generateRandomString();
   const date = generateDate();
   urlDatabase[shortURL] = {date, longURL, userID, numVisits: 0 };
@@ -50,7 +55,7 @@ app.post('/urls', (req, res) => {
 // POST: Delete a url from the database
 app.post('/urls/:shortURL/delete', (req, res, next) => {
   const { shortURL } = req.params;
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
 
   if (userID !== urlDatabase[shortURL].userID || !userID) {
     const err = new Error("Whoa! You can't delete this url, it doesn't belong to you!");
@@ -78,7 +83,7 @@ app.post('/login', (req, res, next) => {
     return next(err);
   }
 
-  res.cookie('user_id', user.userID);
+  req.session.user_id = user.userID;
   res.redirect('/urls');
 });
 
@@ -98,13 +103,13 @@ app.post('/register', (req, res, next) => {
 
   const newUser = registerNewUser(req.body);
   users[newUser.userID] = newUser;
-  res.cookie('user_id', newUser.userID);
+  req.session.user_id = user.userID;
   res.redirect('/urls');
 });
 
 // POST: to Logout and remove cookie
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id', {path: "/"});
+  req.session = null;
   res.redirect('/urls');
 });
 
@@ -115,7 +120,7 @@ app.get('/urls.json', (req, res) => {
 
 // GET: page for creating new ShortURLS, redirects if not logged in
 app.get('/urls/new', (req, res) => {
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
 
   if (!userID) {
     return res.redirect('/login');
@@ -130,7 +135,7 @@ app.get('/urls/new', (req, res) => {
 app.post('/urls/:shortURL', (req, res, next) => {
   const { longURL } = req.body;
   const { shortURL } = req.params;
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
 
   if (userID !== urlDatabase[shortURL].userID || !userID) {
     const err = new Error("Whoa! You can't update this url, it doesn't belong to you!");
@@ -145,7 +150,7 @@ app.post('/urls/:shortURL', (req, res, next) => {
 // GET: a URL and renders HTML page or throws error if not found / not logged in / user doesn't own the url
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
   const dbShortURL = urlDatabase[shortURL];
 
   if (!userID) {
@@ -189,7 +194,7 @@ app.get('/u/:shortURL', (req, res, next) => {
 
 // Error Handler
 app.use((err, req, res, next) => {
-  const userID = req.cookies['user_id'];
+  const userID = req.session.user_id;
   const user = users[userID];
   res.status(err.status).render("urls_error", {error: err, user});
 });
