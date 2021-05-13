@@ -48,4 +48,4 @@ const comparePasswords = (password, dbPassword) => {
   return bcrypt.compare(password, dbPassword);
 };
 
-module.exports = { generateRandomString, generateDate, registerNewUser, getUserByEmail, urlsForUser, comparePasswords };
+module.exports = { generateRandomString, generateDate, registerNewUser, getUserByEmail, urlsForUser, comparePasswords};

@@ -6,19 +6,19 @@ const { generateDate, generateRandomString, registerNewUser, getUserByEmail, url
 const app = express();
 const PORT = 8080;
 
-// MiddleWare:
+// *** MIDDLEWARE *** 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(cookieSession({name: 'session', keys: ['abc123'] }));
-
 app.set("view engine", "ejs");
 
+// *** DATEBASE **
 const urlDatabase = {};
-
 const users = {};
 
-// Requests
+// *** Requests ***
 // GET: homepage, redirects to /urls if logged in or to login page if not
+// PUBLIC
 app.get('/', (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
@@ -28,8 +28,16 @@ app.get('/', (req, res) => {
 });
 
 // GET: user's homepage filters to show only their URLs
-app.get('/urls', (req, res) => {
+// PRIVATE
+app.get('/urls', (req, res, next) => {
   const userID = req.session.user_id;
+
+  if(!userID) {
+    const err = new Error("Try logging in first!");
+    err.status = 403;
+    next(err)
+  }
+
   const user = users[userID];
   const urls = urlsForUser(userID, urlDatabase);
   const templateVars = {urls, user};
@@ -37,14 +45,17 @@ app.get('/urls', (req, res) => {
 });
 
 // POST: Add URL to datebase
+// PRIVATE
 app.post('/urls', (req, res, next) => {
   const longURL = req.body.longURL;
   const userID = req.session.user_id;
+
   if(!userID) {
     const err = new Error("Whoa! You have to login first!");
     err.status = 403;
     return next(err);
   }
+
   const shortURL = generateRandomString();
   const date = generateDate();
   urlDatabase[shortURL] = {date, longURL, userID, numVisits: 0 };
@@ -52,18 +63,13 @@ app.post('/urls', (req, res, next) => {
 });
 
 // POST: Delete a url from the database
+// PRIVATE
 app.post('/urls/:shortURL/delete', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
 
-  if(!userID) {
-    const err = new Error("Whoa! You have to login first!!");
-    err.status = 403;
-    return next(err);
-  }
-
-  if (userID !== urlDatabase[shortURL].userID) {
-    const err = new Error("Whoa! You can't delete this url, it doesn't belong to you!");
+  if (!userID || userID !== urlDatabase[shortURL].userID) {
+    const err = new Error("Whoa! This URL doesn't belong to you! Login first or double check your URLs!");
     err.status = 403;
     return next(err);
   }
@@ -73,15 +79,19 @@ app.post('/urls/:shortURL/delete', (req, res, next) => {
 });
 
 // GET: login page
+// PUBLIC
 app.get('/login', (req, res) => {
   const userID = req.session.user_id;
+
   if(!userID) {
   return res.render('urls_login');
   }
+
   res.redirect('/urls');
 });
 
 // POST: login to tinyApp, authenticates users email and password
+// PUBLIC
 app.post('/login', (req, res, next) => {
   const { email, password } = (req.body);
   const user = getUserByEmail(email, users);
@@ -97,22 +107,25 @@ app.post('/login', (req, res, next) => {
 });
 
 // GET: registration page
+// PUBLIC
 app.get('/register', (req, res) => {
   const userID = req.session.user_id;
+
   if(!userID) {
    return res.render('urls_register');
   }
+
  res.redirect('/urls');
 });
 
 // POST: a request to register a new user, authenticates credentials before adding to database and redirecting
+// PUBLIC
 app.post('/register', (req, res, next) => {
   if (!req.body.email || !req.body.password || getUserByEmail(req.body.email, users)) {
-    const err = new Error("Whoops! Something went wrong registering you. Please try again.");
+    const err = new Error("Whoa! Something went wrong registering you. Please try again.");
     err.status = 400;
     return next(err);
   }
-
 
   const newUser = registerNewUser(req.body);
   users[newUser.userID] = newUser;
@@ -121,17 +134,14 @@ app.post('/register', (req, res, next) => {
 });
 
 // POST: to Logout and remove cookie
+// PRIVATE
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/urls');
 });
 
-// GET: database in json form
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
 // GET: page for creating new ShortURLS, redirects if not logged in
+// PRIVATE
 app.get('/urls/new', (req, res) => {
   const userID = req.session.user_id;
 
@@ -145,13 +155,14 @@ app.get('/urls/new', (req, res) => {
 });
 
 // POST: to update an existing url, authenticates users credentials before redirecting
+// PRIVATE
 app.post('/urls/:shortURL', (req, res, next) => {
   const { longURL } = req.body;
   const { shortURL } = req.params;
   const userID = req.session.user_id;
 
   if (userID !== urlDatabase[shortURL].userID || !userID) {
-    const err = new Error("Whoa! You can't update this url, it doesn't belong to you!");
+    const err = new Error("Whoa! This URL doesn't belong to you! Login first or double check your URLs!");
     err.status = 403;
     return next(err);
   }
@@ -161,17 +172,12 @@ app.post('/urls/:shortURL', (req, res, next) => {
 });
 
 // GET: a URL and renders HTML page or throws error if not found / not logged in / user doesn't own the url
+// PRIVATE
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
   const user = users[userID]
   const dbShortURL = urlDatabase[shortURL];
-
-  if (!user) {
-    const err = new Error("Whoa! Try logging in first!");
-    err.status = 403;
-    return next(err);
-  }
 
   if (!dbShortURL) {
     const err = new Error("Whoops! looks like that url can't be found!");
@@ -185,13 +191,14 @@ app.get('/urls/:shortURL', (req, res, next) => {
     return res.render("urls_show", templateVars);
   }
 
-  const err = new Error("Whoa! This URL doesn't belong to you!");
+  const err = new Error("Whoa! This URL doesn't belong to you! Login first or double check your URLs!");
   err.status = 403;
   return next(err);
 });
 
 
 // GET: associated LongURL in the database and redirect to its webpage
+// PUBLIC
 app.get('/u/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const dbShortURL = urlDatabase[shortURL];
@@ -206,7 +213,7 @@ app.get('/u/:shortURL', (req, res, next) => {
   res.redirect(`${dbShortURL.longURL}`);
 });
 
-// Error Handler
+// **Error Handler**
 app.use((err, req, res, next) => {
   const userID = req.session.user_id;
   const user = users[userID];
