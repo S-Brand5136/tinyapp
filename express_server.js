@@ -65,7 +65,7 @@ app.post('/urls', (req, res, next) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// POST: Delete a url from the database
+// DELETE: a url from the database
 // PRIVATE
 app.delete('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
@@ -165,7 +165,7 @@ app.get('/urls/new', (req, res) => {
 
 // POST: to update an existing url, authenticates users credentials before redirecting
 // PRIVATE
-app.post('/urls/:shortURL', (req, res, next) => {
+app.put('/urls/:shortURL', (req, res, next) => {
   const { longURL } = req.body;
   const { shortURL } = req.params;
   const userID = req.session.user_id;
