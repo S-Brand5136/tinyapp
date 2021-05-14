@@ -42,7 +42,7 @@ app.get('/urls', (req, res, next) => {
   if (!userID) {
     const err = new Error('Login or Register to start viewing shortened URLs');
     err.status = 403;
-    next(err);
+    return next(err);
   }
 
   const user = users[userID];
@@ -65,7 +65,7 @@ app.post('/urls', (req, res, next) => {
 
   const shortURL = generateRandomString();
   const date = generateDate();
-  urlDatabase[shortURL] = { date, longURL, userID, numVisits: 0 };
+  urlDatabase[shortURL] = { date, longURL, userID };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -205,8 +205,8 @@ app.get('/urls/:shortURL', (req, res, next) => {
   }
 
   if (dbShortURL.userID === user.userID) {
-    const { longURL, numVisits, date } = dbShortURL;
-    const templateVars = { shortURL, longURL, date, numVisits, user };
+    const { longURL, date } = dbShortURL;
+    const templateVars = { shortURL, longURL, date, user };
     return res.render('urls_show', templateVars);
   }
 
@@ -228,8 +228,6 @@ app.get('/u/:shortURL', (req, res, next) => {
     err.status = 404;
     next(err);
   }
-
-  dbShortURL['numVisits']++;
   res.redirect(`${dbShortURL.longURL}`);
 });
 
