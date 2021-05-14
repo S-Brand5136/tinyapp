@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 
 // GET: user's homepage filters to show only their URLs
 // PRIVATE
-app.get('/urls', (req, res, next) => {
+app.get('/urls', (req, res) => {
   const userID = req.session.user_id;
 
   const user = users[userID];
@@ -126,11 +126,7 @@ app.get('/register', (req, res) => {
 // POST: a request to register a new user, authenticates credentials before adding to database and redirecting
 // PUBLIC
 app.post('/register', (req, res, next) => {
-  if (
-    !req.body.email ||
-    !req.body.password ||
-    getUserByEmail(req.body.email, users)
-  ) {
+  if (!req.body.email || !req.body.password || getUserByEmail(req.body.email, users)) {
     const err = new Error(
       'Whoa! Something went wrong registering you. Please try again.'
     );
