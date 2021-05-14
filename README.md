@@ -6,10 +6,19 @@
 
   - Node.js
   - Express
-    - morgan middleware for watching incoming requests
-    - bodyparser for parsing incoming requests
+  - Morgan
+  - Bodyparser 
+  - Cookie-session
+  - Method-ovverride
+  - Bcrypt
   - Ejs for HTML templates
   - Bootstrap css for styling
+
+## Dev Dependencies used
+
+  - Chai
+  - Mocha
+  - Nodemon
 
 ## Final Product
 
