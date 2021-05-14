@@ -73,7 +73,7 @@ app.delete('/urls/:shortURL', (req, res, next) => {
 
   if (!userID || userID !== urlDatabase[shortURL].userID) {
     const err = new Error(
-      "Whoa! This URL doesn't belong to you! Login first or double check your URLs!"
+      'Whoa! This URL doesn\'t belong to you! Login first or double check your URLs!'
     );
     err.status = 403;
     return next(err);
@@ -172,7 +172,7 @@ app.put('/urls/:shortURL', (req, res, next) => {
 
   if (userID !== urlDatabase[shortURL].userID || !userID) {
     const err = new Error(
-      "Whoa! This URL doesn't belong to you! Login first or double check your URLs!"
+      'Whoa! This URL doesn\'t belong to you! Login first or double check your URLs!'
     );
     err.status = 403;
     return next(err);
@@ -191,15 +191,13 @@ app.get('/urls/:shortURL', (req, res, next) => {
   
   const user = users[userID];
   if(!user) {
-    const err = new Error(
-      "Whoa! Login first to start viewing URLS"
-    );
+    const err = new Error('Whoa! Login first to start viewing URLS');
     err.status = 403;
     return next(err);
   }
 
   if (!dbShortURL) {
-    const err = new Error("Whoops! looks like that url can't be found!");
+    const err = new Error('Whoops! looks like that url can\'t be found!');
     err.status = 404;
     return next(err);
   }
@@ -211,7 +209,7 @@ app.get('/urls/:shortURL', (req, res, next) => {
   }
 
   if (dbShortURL.userID !== user.userID) {
-    const err = new Error("Whoa! This URL doesn't belong to you!");
+    const err = new Error('Whoa! This URL doesn\'t belong to you!');
     err.status = 403;
     return next(err);
   }
@@ -225,7 +223,7 @@ app.get('/u/:shortURL', (req, res, next) => {
   const dbShortURL = urlDatabase[shortURL];
 
   if (!dbShortURL) {
-    const err = new Error("Whoops! We can't find that link!");
+    const err = new Error('Whoops! We can\'t find that link!');
     err.status = 404;
     next(err);
   }
