@@ -39,12 +39,6 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res, next) => {
   const userID = req.session.user_id;
 
-  if (!userID) {
-    const err = new Error('Login or Register to start viewing shortened URLs');
-    err.status = 403;
-    return next(err);
-  }
-
   const user = users[userID];
   const urls = urlsForUser(userID, urlDatabase);
   const templateVars = { urls, user };
