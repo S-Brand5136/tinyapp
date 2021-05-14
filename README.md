@@ -14,13 +14,13 @@
 ## Final Product
 
 #### User home Page
-!["Image of main user homepage"](./docs/tinyApp_urls.png)
+!["Image of main user homepage"](https://github.com/S-Brand5136/tinyapp/blob/master/docs/tinyApp_login.png)
 
 #### Login user page 
-!["Image of login page"](./docs/tinyApp_login.png)
+!["Image of login page"](https://github.com/S-Brand5136/tinyapp/blob/master/docs/tinyApp_register.png)
 
 #### Register user page
-!["Image of register page"](./docs/tinyApp_register.png)
+!["Image of register page"](https://github.com/S-Brand5136/tinyapp/blob/master/docs/tinyApp_urls.png)
 
 ## Installation
   - first clone the repository
