@@ -163,7 +163,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
-// POST: to update an existing url, authenticates users credentials before redirecting
+// PUT: update an existing url, authenticates users credentials before redirecting
 // PRIVATE
 app.put('/urls/:shortURL', (req, res, next) => {
   const { longURL } = req.body;
