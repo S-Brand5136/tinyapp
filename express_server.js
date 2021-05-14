@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 const {
   generateDate,
   generateRandomString,
@@ -17,6 +18,7 @@ const PORT = 8080;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieSession({ name: 'session', keys: ['abc123'] }));
+app.use(methodOverride('_method'))
 app.set('view engine', 'ejs');
 
 // *** DATEBASE **
@@ -65,7 +67,7 @@ app.post('/urls', (req, res, next) => {
 
 // POST: Delete a url from the database
 // PRIVATE
-app.post('/urls/:shortURL/delete', (req, res, next) => {
+app.delete('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
 
