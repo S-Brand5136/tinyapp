@@ -4,7 +4,7 @@
 
 ### Table of Contents
 1. [Dependencies](#dependencies)
-2. [Example2](#final)
+2. [Final Product](#final)
 3. [Installation](#installation)
 4. [Tests](#tests)
 5. [How to](#howto)
@@ -29,13 +29,13 @@
 
 ## Final Product <a name="final"></a>
 
-#### User home Page
+#### User Home Page
 !["Image of main user homepage"](https://github.com/S-Brand5136/tinyapp/blob/master/docs/tinyApp_urls.png)
 
-#### Login user page 
+#### Login User Page 
 !["Image of login page"](https://github.com/S-Brand5136/tinyapp/blob/master/docs/tinyApp_login.png)
 
-#### Register user page
+#### Register User Page
 !["Image of register page"](https://github.com/S-Brand5136/tinyapp/blob/master/docs/tinyApp_register.png)
 
 ## Installation <a name="installation"></a>
