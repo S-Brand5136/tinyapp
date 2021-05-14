@@ -187,26 +187,34 @@ app.put('/urls/:shortURL', (req, res, next) => {
 app.get('/urls/:shortURL', (req, res, next) => {
   const { shortURL } = req.params;
   const userID = req.session.user_id;
-  const user = users[userID];
   const dbShortURL = urlDatabase[shortURL];
+  
+  const user = users[userID];
+  if(!user) {
+    const err = new Error(
+      "Whoa! Login first to start viewing URLS"
+    );
+    err.status = 403;
+    return next(err);
+  }
 
   if (!dbShortURL) {
     const err = new Error("Whoops! looks like that url can't be found!");
     err.status = 404;
     return next(err);
   }
-
+  
   if (dbShortURL.userID === user.userID) {
     const { longURL, date } = dbShortURL;
     const templateVars = { shortURL, longURL, date, user };
     return res.render('urls_show', templateVars);
   }
 
-  const err = new Error(
-    "Whoa! This URL doesn't belong to you! Login first or double check your URLs!"
-  );
-  err.status = 403;
-  return next(err);
+  if (dbShortURL.userID !== user.userID) {
+    const err = new Error("Whoa! This URL doesn't belong to you!");
+    err.status = 403;
+    return next(err);
+  }
 });
 
 
